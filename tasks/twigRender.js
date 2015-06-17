@@ -78,6 +78,14 @@ module.exports = function(grunt) {
     var replacer = function(match, filename, extension) {
       return filename+"_"+i+extension;
     };
+    var twigConfig = {
+      path: template,
+      async: false
+    };
+
+    if ( this.options.base ) {
+      twigConfig.base = this.options.base;
+    }
 
     if(actualData) {
       if(isArray(actualData.dataPath)) {
@@ -95,7 +103,7 @@ module.exports = function(grunt) {
           }
         }
         for (i = 0, len = pathArray.length; i < len; i++) { 
-          var tt = Twig.twig({path: template, async: false});
+          var tt = Twig.twig(twigConfig);
           // compute destination path by inserting '_n'
           var destPath = dest.replace(/(.*)(\.[^\.]+)$/, replacer);
           actualData.dataPath = pathArray[i];
@@ -103,10 +111,7 @@ module.exports = function(grunt) {
         }
         actualData.dataPath = pathArray;
       } else {
-        var twigTemplate = Twig.twig({
-          path: template,
-          async: false
-        });
+        var twigTemplate = Twig.twig(twigConfig);
         grunt.file.write(dest, twigTemplate.render(actualData));
       }
     }
